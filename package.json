@@ -1,0 +1,51 @@
+{
+  "name": "christmas-lights",
+  "version": "0.0.1",
+  "description": "My Christmas Lights",
+  "main": "out/index.js",
+  "type": "module",
+  "engines": {
+    "node": "18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "npm run build && node --inspect .",
+    "watch": "nodemon --watch src/ --watch *.env* --exec 'npm run dev'",
+    "lint": "eslint .",
+    "test": "jest",
+    "test:unit": "jest --runInBand --testRegex .*.test.ts",
+    "test:unit:debug": "node --inspect-brk node_modules/jest/bin/jest.js  --testRegex .*.test.ts --coverage=false --testTimeout=600000 --watch",
+    "test:integration": "jest --runInBand --testRegex .*.spec.ts",
+    "test:integration:debug": "node --inspect-brk node_modules/jest/bin/jest.js  --testRegex .*.spec.ts --coverage=false --testTimeout=600000 --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dudeofawesome/christmas-lights.git"
+  },
+  "author": "Louis Orleans <louis@orleans.io>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/dudeofawesome/christmas-lights/issues"
+  },
+  "homepage": "https://github.com/dudeofawesome/christmas-lights#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "rpi-ws281x-native": "^1.0.4",
+    "rpio": "^2.4.2",
+    "source-map-support": "^0.5.21"
+  },
+  "devDependencies": {
+    "@iunu-inc/code-style": "^0.0.10",
+    "@iunu-inc/eslint-config-node": "^0.0.11",
+    "@iunu-inc/eslint-config-typescript": "^0.0.12",
+    "@types/rpi-ws281x-native": "^1.0.0",
+    "@types/rpio": "^2.4.2",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "jest": "^28.1.2",
+    "nodemon": "^2.0.20",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3"
+  }
+}

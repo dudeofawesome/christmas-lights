@@ -1,0 +1,3 @@
+extends: '@iunu-inc'
+root: true
+parserOptions.ecmaVersion: 18
