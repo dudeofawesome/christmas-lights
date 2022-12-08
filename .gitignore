@@ -54,8 +54,8 @@ node_modules/
 .yarn-integrity
 
 # secrets
-*.env
-*.env.*
+#*.env
+#*.env.*
 
 # yarn v2
 .yarn/cache
