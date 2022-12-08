@@ -6,7 +6,7 @@ export class CandyCanePattern {
   private squareness = 6;
   private width_factor = 0.3185;
   private speed_factor = 50;
-  private anim_speed = 6;
+  private anim_speed = 60;
 
   constructor(private leds_service: LEDSService, private segments: number[][]) {
     setImmediate(this.loop.bind(this), performance.now());
@@ -16,10 +16,10 @@ export class CandyCanePattern {
     const x = time / this.speed_factor;
 
     for (const segment of this.segments) {
-      for (const j of segment) {
-        const saturation = this.curve(j + x) * 255;
+      for (let i = 0; i < segment.length; i++) {
+        const saturation = this.curve(i + x) * 255;
 
-        this.leds_service.channel.array[j] = rgb_to_int(
+        this.leds_service.channel.array[segment[i]] = rgb_to_int(
           255,
           255 - saturation,
           255 - saturation,
