@@ -41,7 +41,7 @@ export class LEDSService {
     if (PRINT_TIMINGS) {
       const delta = timestamp - this.last_timestamp;
       this.last_timestamp = timestamp;
-      console.info(`${delta} ms`);
+      console.info(`${delta.toFixed(0)} ms`);
     }
 
     if (PRINT_LED_ARRAY) {
