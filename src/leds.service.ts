@@ -44,7 +44,7 @@ export class LEDSService {
     if (PRINT_LED_ARRAY) {
       console.log(
         Array.from(this.channel.array)
-          .map((c) => chalk.hex(`#${c.toString(16)}`)('•'))
+          .map((c) => chalk.hex(`#${c.toString(16)}`).bgBlack('•'))
           .join(''),
       );
     }
