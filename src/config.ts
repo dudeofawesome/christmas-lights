@@ -5,5 +5,7 @@ export const LOGIC_LEVEL_SHIFTER_PIN = parseInt(
   process.env.LOGIC_LEVEL_SHIFTER_PIN!,
 );
 
+export const PRINT_TIMINGS = process.env.PRINT_TIMINGS === 'true';
 export const PRINT_LED_ARRAY = process.env.PRINT_LED_ARRAY === 'true';
+
 export const NO_GPIO = process.env.NO_GPIO === 'true';

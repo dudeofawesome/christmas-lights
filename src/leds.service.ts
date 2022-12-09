@@ -7,6 +7,7 @@ import {
   LED_TYPE,
   LED_PIN,
   NO_GPIO,
+  PRINT_TIMINGS,
 } from './config.js';
 
 export class LEDSService {
@@ -37,9 +38,11 @@ export class LEDSService {
   }
 
   private loop(timestamp: number): NodeJS.Immediate {
-    const delta = timestamp - this.last_timestamp;
-    this.last_timestamp = timestamp;
-    //console.info(`${delta} ms`);
+    if (PRINT_TIMINGS) {
+      const delta = timestamp - this.last_timestamp;
+      this.last_timestamp = timestamp;
+      console.info(`${delta} ms`);
+    }
 
     if (PRINT_LED_ARRAY) {
       console.log(
