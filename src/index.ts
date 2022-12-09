@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 
 import { LEDSService } from './leds.service.js';
 import { LogicLevelShifterService } from './logic-level-shifter.service.js';
-import { CandyCanePattern } from './patterns/candy-cane.js';
+import { PatternService } from './pattern.service.js';
 import { fill_list } from './light-segments.js';
 
 async function main() {
@@ -20,7 +20,7 @@ async function main() {
 
   const logic_level_shifter_service = new LogicLevelShifterService();
   const leds_service = new LEDSService();
-  const candy_cane_pattern = new CandyCanePattern(leds_service, segments);
+  const pattern_service = new PatternService(leds_service, segments);
 }
 
 main();
