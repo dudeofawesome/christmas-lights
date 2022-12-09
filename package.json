@@ -9,7 +9,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "npm run build && node --inspect .",
+    "start": "node --require dotenv/config .",
+    "dev": "npm run build && node --require dotenv/config --inspect .",
     "watch": "nodemon --watch src/ --watch *.env* --exec 'npm run dev'",
     "lint": "eslint .",
     "test": "jest",

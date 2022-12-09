@@ -1,6 +1,14 @@
 import ws281x from 'rpi-ws281x-native';
 import chalk from 'chalk';
 
+import {
+  PRINT_LED_ARRAY,
+  LED_COUNT,
+  LED_TYPE,
+  LED_PIN,
+  NO_GPIO,
+} from './config.js';
+
 export class LEDSService {
   channel: {
     readonly count: number;
@@ -13,18 +21,17 @@ export class LEDSService {
   };
   private last_timestamp: number = performance.now();
 
-  private PRINT_LED_ARRAY = process.env.PRINT_LED_ARRAY === 'true';
-
   constructor() {
-    this.channel = ws281x(parseInt(process.env.LED_COUNT!), {
-      stripType: process.env.LED_TYPE! as any,
-      gpio: parseInt(process.env.LED_PIN!),
+    this.channel = ws281x(LED_COUNT, {
+      stripType: LED_TYPE as any,
+      gpio: LED_PIN,
     });
-
-    process.on('SIGINT', () => {
-      ws281x.reset();
-      ws281x.finalize();
-    });
+    if (!NO_GPIO) {
+      process.on('SIGINT', () => {
+        ws281x.reset();
+        ws281x.finalize();
+      });
+    }
 
     setImmediate(this.loop.bind(this), performance.now());
   }
@@ -34,7 +41,7 @@ export class LEDSService {
     this.last_timestamp = timestamp;
     //console.info(`${delta} ms`);
 
-    if (this.PRINT_LED_ARRAY) {
+    if (PRINT_LED_ARRAY) {
       console.log(
         Array.from(this.channel.array)
           .map((c) => chalk.hex(`#${c.toString(16)}`)('•'))
@@ -42,7 +49,9 @@ export class LEDSService {
       );
     }
 
-    ws281x.render();
+    if (!NO_GPIO) {
+      ws281x.render();
+    }
 
     return setImmediate(this.loop.bind(this), performance.now());
   }

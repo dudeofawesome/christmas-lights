@@ -1,5 +1,4 @@
 import 'source-map-support/register.js';
-import * as dotenv from 'dotenv';
 
 import { LEDSService } from './leds.service.js';
 import { LogicLevelShifterService } from './logic-level-shifter.service.js';
@@ -7,8 +6,6 @@ import { PatternService } from './pattern.service.js';
 import { fill_list } from './light-segments.js';
 
 async function main() {
-  dotenv.config();
-
   const segments = [
     fill_list(0, 33), // eave over garage door
     fill_list(34, 297), // eave over entry doors
