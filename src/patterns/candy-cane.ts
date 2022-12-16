@@ -1,4 +1,4 @@
-import { rgb_to_int } from '../utils/rgb-to-int.js';
+import { rgb_to_int } from '../utils/colorspaces.js';
 import type { LEDSService } from '../leds.service.js';
 import type { Pattern } from './pattern.interface.js';
 
