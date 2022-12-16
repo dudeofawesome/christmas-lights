@@ -45,7 +45,8 @@ export class LEDSService {
     }
 
     if (PRINT_LED_ARRAY) {
-      console.log(
+      process.stdout.cursorTo(0);
+      process.stdout.write(
         Array.from(this.channel.array)
           .map((c) => chalk.hex(`#${c.toString(16)}`).bgBlack('•'))
           .join(''),
