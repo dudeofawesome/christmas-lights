@@ -1,6 +1,7 @@
 import type { LEDSService } from './leds.service.js';
 import type { Pattern } from './patterns/pattern.interface.js';
 import { CandyCanePattern } from './patterns/candy-cane.js';
+import { GingerbreadHousePattern } from './patterns/gingerbread-house.js';
 
 export class PatternService {
   patterns: Map<string, Pattern> = new Map();
@@ -10,6 +11,10 @@ export class PatternService {
     this.patterns.set(
       'candy-cane',
       new CandyCanePattern(leds_service, segments),
+    );
+    this.patterns.set(
+      'gingerbread-house',
+      new GingerbreadHousePattern(leds_service, segments),
     );
 
     this.active_pattern = this.patterns.get('candy-cane');

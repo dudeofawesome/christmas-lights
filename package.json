@@ -31,6 +31,7 @@
   "homepage": "https://github.com/dudeofawesome/christmas-lights#readme",
   "dependencies": {
     "chalk": "^5.1.2",
+    "color-convert": "^2.0.1",
     "dotenv": "^16.0.3",
     "rpi-ws281x-native": "^1.0.4",
     "rpio": "^2.4.2",
@@ -40,6 +41,7 @@
     "@iunu-inc/code-style": "^0.0.10",
     "@iunu-inc/eslint-config-node": "^0.0.11",
     "@iunu-inc/eslint-config-typescript": "^0.0.12",
+    "@types/color-convert": "^2.0.0",
     "@types/rpi-ws281x-native": "^1.0.0",
     "@types/rpio": "^2.4.2",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
