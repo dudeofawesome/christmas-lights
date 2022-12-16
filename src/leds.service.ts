@@ -9,6 +9,7 @@ import {
   NO_GPIO,
   PRINT_TIMINGS,
 } from './config.js';
+import { int_to_rgb } from './utils/colorspaces.js';
 
 export class LEDSService {
   channel: {
@@ -48,7 +49,7 @@ export class LEDSService {
       process.stdout.cursorTo(0);
       process.stdout.write(
         Array.from(this.channel.array)
-          .map((c) => chalk.hex(`#${c.toString(16)}`).bgBlack('•'))
+          .map((c) => chalk.rgb(...int_to_rgb(c)).bgBlack('•'))
           .join(''),
       );
     }
