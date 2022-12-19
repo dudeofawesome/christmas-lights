@@ -17,6 +17,9 @@ import { int_to_rgb } from './utils/colorspaces.js';
 const FRAME_END_SEQUENCE = new Uint8Array([0x01]);
 const SUBFRAME_END_SEQUENCE = new Uint8Array([0x03]);
 
+const cursorTo = promisify(process.stdout.cursorTo.bind(process.stdout));
+const moveCursor = promisify(process.stdout.moveCursor.bind(process.stdout));
+
 export class LEDSService {
   private leds_array = new Uint8Array(LED_COUNT * 3);
   private serial?: SerialPort;
@@ -50,7 +53,11 @@ export class LEDSService {
     }
 
     if (PRINT_LED_ARRAY) {
-      process.stdout.cursorTo(0);
+      await cursorTo(0);
+      await moveCursor(
+        0,
+        -Math.abs(Math.floor((LED_COUNT - 1) / process.stdout.columns)),
+      );
       process.stdout.write(this.led_array_to_string());
     }
 
