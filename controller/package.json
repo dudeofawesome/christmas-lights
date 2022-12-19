@@ -11,6 +11,7 @@
     "build": "tsc",
     "start": "node --require dotenv/config .",
     "dev": "npm run build && node --require dotenv/config --inspect .",
+    "debug": "npm run build && node --require dotenv/config --inspect --inspect-brk .",
     "watch": "nodemon --watch src/ --watch *.env* --exec 'npm run dev'",
     "lint": "eslint .",
     "test": "jest",
