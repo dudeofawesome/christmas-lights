@@ -9,3 +9,7 @@ export const PRINT_TIMINGS = process.env.PRINT_TIMINGS === 'true';
 export const PRINT_LED_ARRAY = process.env.PRINT_LED_ARRAY === 'true';
 
 export const NO_GPIO = process.env.NO_GPIO === 'true';
+
+export const SERIAL_PORT = process.env.SERIAL_PORT!;
+export const BAUD_RATE = parseInt(process.env.BAUD_RATE!);
+export const SERIAL_BUFFER_SIZE = parseInt(process.env.SERIAL_BUFFER_SIZE!);
