@@ -9,6 +9,7 @@ import {
   SERIAL_PORT,
   BAUD_RATE,
   SERIAL_BUFFER_SIZE,
+  PRINT_SERIAL,
 } from './config.js';
 import { int_to_rgb } from './utils/colorspaces.js';
 
@@ -20,8 +21,6 @@ export class LEDSService {
   private serial = new SerialPort({ path: SERIAL_PORT, baudRate: BAUD_RATE });
   private last_timestamp: number = performance.now();
 
-  private serial_write: (data: string | Buffer | Uint8Array) => Promise<void> =
-    promisify(this.serial.write.bind(this.serial));
   private serial_drain = promisify(this.serial.drain.bind(this.serial));
 
   constructor() {
@@ -29,9 +28,11 @@ export class LEDSService {
     this.serial.setEncoding('binary');
     setImmediate(this.loop.bind(this), performance.now());
 
-    this.serial.on('data', (data) => {
-      process.stdout.write(data.toString('ascii'));
-    });
+    if (PRINT_SERIAL) {
+      this.serial.on('data', (data) => {
+        process.stdout.write(data.toString('ascii'));
+      });
+    }
   }
 
   private async loop(timestamp: number): Promise<NodeJS.Timeout> {
@@ -57,7 +58,7 @@ export class LEDSService {
         Math.min(cursor + SERIAL_BUFFER_SIZE, this.leds_array.length),
       );
 
-      console.log(`subframe size: ${subframe.length} bytes`);
+      if (PRINT_SERIAL) console.log(`subframe size: ${subframe.length} bytes`);
 
       // TODO: it's possible this drain call doesn't actually wait for the drain to occur
       if (!this.serial.write(subframe)) await this.serial_drain();
@@ -77,10 +78,10 @@ export class LEDSService {
         this.serial.addListener('data', listener);
 
         this.serial.write(SUBFRAME_END_SEQUENCE);
-        console.log('waiting for SUBFRAME_END ack');
+        if (PRINT_SERIAL) console.log('waiting for SUBFRAME_END ack');
       });
 
-      console.log('got SUBFRAME_END ack');
+      if (PRINT_SERIAL) console.log('got SUBFRAME_END ack');
     }
     // TODO: it's possible this drain call doesn't actually wait for the drain to occur
     if (!this.serial.write(FRAME_END_SEQUENCE)) await this.serial_drain();
