@@ -1,9 +1,10 @@
 export const LED_COUNT = parseInt(process.env.LED_COUNT!);
-export const LED_TYPE = process.env.LED_TYPE;
-export const LED_PIN = parseInt(process.env.LED_PIN!);
-export const LOGIC_LEVEL_SHIFTER_PIN = parseInt(
-  process.env.LOGIC_LEVEL_SHIFTER_PIN!,
+export const LED_ON_SUNSET_OFFSET_HR = parseFloat(
+  process.env.LED_ON_SUNSET_OFFSET_HR!,
 );
+export const LED_OFF_HR = parseFloat(process.env.LED_OFF_HR!);
+export const LATITUDE = parseFloat(process.env.LATITUDE!);
+export const LONGITUDE = parseFloat(process.env.LONGITUDE!);
 
 export const PRINT_TIMINGS = process.env.PRINT_TIMINGS === 'true';
 export const PRINT_LED_ARRAY = process.env.PRINT_LED_ARRAY === 'true';

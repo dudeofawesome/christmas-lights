@@ -3,6 +3,7 @@ import 'source-map-support/register.js';
 import { LEDSService } from './leds.service.js';
 import { PatternService } from './pattern.service.js';
 import { fill_list } from './light-segments.js';
+import { SchedulerService } from './scheduler.service.js';
 
 async function main() {
   const segments = [
@@ -16,6 +17,7 @@ async function main() {
 
   const leds_service = new LEDSService();
   const pattern_service = new PatternService(leds_service, segments);
+  const schedule_service = new SchedulerService(pattern_service);
 }
 
 main();
