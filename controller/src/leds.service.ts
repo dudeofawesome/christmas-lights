@@ -10,6 +10,7 @@ import {
   BAUD_RATE,
   SERIAL_BUFFER_SIZE,
   PRINT_SERIAL,
+  NO_IO,
 } from './config.js';
 import { int_to_rgb } from './utils/colorspaces.js';
 
@@ -18,18 +19,24 @@ const SUBFRAME_END_SEQUENCE = new Uint8Array([0x03]);
 
 export class LEDSService {
   private leds_array = new Uint8Array(LED_COUNT * 3);
-  private serial = new SerialPort({ path: SERIAL_PORT, baudRate: BAUD_RATE });
+  private serial?: SerialPort;
   private last_timestamp: number = performance.now();
 
-  private serial_drain = promisify(this.serial.drain.bind(this.serial));
+  private serial_drain?: () => Promise<void>;
 
   constructor() {
-    console.log(this.serial.path, this.serial.baudRate);
-    this.serial.setEncoding('binary');
+    if (!NO_IO) {
+      this.serial = new SerialPort({ path: SERIAL_PORT, baudRate: BAUD_RATE });
+      console.log(this.serial.path, this.serial.baudRate);
+      this.serial.setEncoding('binary');
+
+      this.serial_drain = promisify(this.serial.drain.bind(this.serial));
+    }
+
     setImmediate(this.loop.bind(this), performance.now());
 
-    if (PRINT_SERIAL) {
-      this.serial.on('data', (data) => {
+    if (PRINT_SERIAL && !NO_IO) {
+      this.serial!.on('data', (data) => {
         process.stdout.write(data.toString('ascii'));
       });
     }
@@ -47,44 +54,48 @@ export class LEDSService {
       process.stdout.write(this.led_array_to_string());
     }
 
-    // write LED array data to serial in SERIAL_BUFFER_SIZE chunks
-    for (
-      let cursor = 0;
-      cursor < this.leds_array.length;
-      cursor += SERIAL_BUFFER_SIZE
-    ) {
-      const subframe = this.leds_array.subarray(
-        cursor,
-        Math.min(cursor + SERIAL_BUFFER_SIZE, this.leds_array.length),
-      );
+    if (!NO_IO) {
+      // write LED array data to serial in SERIAL_BUFFER_SIZE chunks
+      for (
+        let cursor = 0;
+        cursor < this.leds_array.length;
+        cursor += SERIAL_BUFFER_SIZE
+      ) {
+        const subframe = this.leds_array.subarray(
+          cursor,
+          Math.min(cursor + SERIAL_BUFFER_SIZE, this.leds_array.length),
+        );
 
-      if (PRINT_SERIAL) console.log(`subframe size: ${subframe.length} bytes`);
+        if (PRINT_SERIAL)
+          console.log(`subframe size: ${subframe.length} bytes`);
 
+        // TODO: it's possible this drain call doesn't actually wait for the drain to occur
+        if (!this.serial!.write(subframe)) await this.serial_drain!();
+        if (!this.serial!.write(SUBFRAME_END_SEQUENCE))
+          await this.serial_drain!();
+
+        /**
+         * Wait for Arduino to ack the end of a subframe, indicating that the
+         * serial buffer should be cleared.
+         */
+        await new Promise<void>((res) => {
+          const listener = (data: string) => {
+            if (data[0] === `${SUBFRAME_END_SEQUENCE[0]}`) {
+              this.serial!.removeListener('data', listener);
+              return res();
+            }
+          };
+          this.serial!.addListener('data', listener);
+
+          this.serial!.write(SUBFRAME_END_SEQUENCE);
+          if (PRINT_SERIAL) console.log('waiting for SUBFRAME_END ack');
+        });
+
+        if (PRINT_SERIAL) console.log('got SUBFRAME_END ack');
+      }
       // TODO: it's possible this drain call doesn't actually wait for the drain to occur
-      if (!this.serial.write(subframe)) await this.serial_drain();
-      if (!this.serial.write(SUBFRAME_END_SEQUENCE)) await this.serial_drain();
-
-      /**
-       * Wait for Arduino to ack the end of a subframe, indicating that the
-       * serial buffer should be cleared.
-       */
-      await new Promise<void>((res) => {
-        const listener = (data: string) => {
-          if (data[0] === `${SUBFRAME_END_SEQUENCE[0]}`) {
-            this.serial.removeListener('data', listener);
-            return res();
-          }
-        };
-        this.serial.addListener('data', listener);
-
-        this.serial.write(SUBFRAME_END_SEQUENCE);
-        if (PRINT_SERIAL) console.log('waiting for SUBFRAME_END ack');
-      });
-
-      if (PRINT_SERIAL) console.log('got SUBFRAME_END ack');
+      if (!this.serial!.write(FRAME_END_SEQUENCE)) await this.serial_drain!();
     }
-    // TODO: it's possible this drain call doesn't actually wait for the drain to occur
-    if (!this.serial.write(FRAME_END_SEQUENCE)) await this.serial_drain();
 
     return setTimeout(this.loop.bind(this), 1000 / 60, performance.now());
   }
