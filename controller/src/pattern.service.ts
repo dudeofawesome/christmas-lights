@@ -3,6 +3,7 @@ import type { Pattern } from './patterns/pattern.interface.js';
 import { CandyCanePattern } from './patterns/candy-cane.js';
 import { GingerbreadHousePattern } from './patterns/gingerbread-house.js';
 import { OffPattern } from './patterns/off.js';
+import { TraditionalMulticolorPattern } from './patterns/traditional-multicolor.js';
 
 export class PatternService {
   #patterns: Map<string, Pattern> = new Map();
@@ -17,6 +18,10 @@ export class PatternService {
     this.#patterns.set(
       'gingerbread-house',
       new GingerbreadHousePattern(leds_service, segments),
+    );
+    this.#patterns.set(
+      'traditional-multicolor',
+      new TraditionalMulticolorPattern(leds_service, segments),
     );
 
     this.#active_pattern = this.#patterns.get('off');
