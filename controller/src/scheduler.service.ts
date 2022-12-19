@@ -21,7 +21,7 @@ export class SchedulerService {
     const fractional_hour = date_to_fractional_hours();
 
     if (SchedulerService.lights_should_be_on(fractional_hour)) {
-      this.pattern_service.active_pattern = 'candy-cane';
+      this.pattern_service.active_pattern = process.argv[2] ?? 'candy-cane';
     } else {
       this.pattern_service.active_pattern = 'off';
     }
