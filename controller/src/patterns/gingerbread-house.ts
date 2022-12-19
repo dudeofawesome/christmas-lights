@@ -31,7 +31,7 @@ export class GingerbreadHousePattern implements Pattern {
       const segment = this.segments[i]!;
 
       for (let j = 0; j < segment.length; j++) {
-        this.leds_service.channel.array[segment[j]!] = this.segment_colors[i]!;
+        this.leds_service.set_led(segment[j]!, this.segment_colors[i]!);
       }
     }
   }

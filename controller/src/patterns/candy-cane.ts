@@ -22,11 +22,11 @@ export class CandyCanePattern implements Pattern {
       for (let i = 0; i < segment.length; i++) {
         const saturation = this.curve(i + min + x) * 255;
 
-        this.leds_service.channel.array[segment[i]!] = rgb_to_int(
+        this.leds_service.set_led(segment[i]!, [
           255,
           255 - saturation,
           255 - saturation,
-        );
+        ]);
       }
     }
   }
