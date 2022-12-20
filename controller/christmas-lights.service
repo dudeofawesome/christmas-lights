@@ -1,0 +1,15 @@
+[Unit]
+Description=Christmas Lights
+
+[Service]
+Type=simple
+User=dudeofawesome
+Restart=always
+RestartSec=10
+ExecStart=bash -c '\
+  cd /home/dudeofawesome/git/dudeofawesome/christmas-lights/controller; \
+  npm run start; \
+  '
+
+[Install]
+WantedBy=default.target
