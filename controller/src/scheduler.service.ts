@@ -20,8 +20,18 @@ export class SchedulerService {
   loop(time: number): NodeJS.Timeout {
     const fractional_hour = date_to_fractional_hours();
 
-    if (SchedulerService.lights_should_be_on(fractional_hour)) {
-      this.pattern_service.active_pattern = process.argv[2] ?? 'candy-cane';
+    if (process.argv[2] != null) {
+      this.pattern_service.active_pattern = process.argv[2];
+    } else if (SchedulerService.lights_should_be_on(fractional_hour)) {
+      if (
+        this.pattern_service.active_pattern === 'off' ||
+        this.pattern_service.active_pattern == null
+      ) {
+        this.pattern_service.active_pattern =
+          this.pattern_service.patterns[
+            Math.floor(Math.random() * this.pattern_service.patterns.length)
+          ];
+      }
     } else {
       this.pattern_service.active_pattern = 'off';
     }

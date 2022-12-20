@@ -9,6 +9,7 @@ import { WarmWhitePattern } from './patterns/warm-white.js';
 export class PatternService {
   #patterns: Map<string, Pattern> = new Map();
   #active_pattern?: Pattern;
+  #active_pattern_name?: string;
 
   constructor(leds_service: LEDSService, segments: number[][]) {
     this.#patterns.set('off', new OffPattern(leds_service));
@@ -29,7 +30,7 @@ export class PatternService {
       new WarmWhitePattern(leds_service, segments),
     );
 
-    this.#active_pattern = this.#patterns.get('off');
+    this.active_pattern = 'off';
 
     setImmediate(this.loop.bind(this), performance.now());
   }
@@ -40,12 +41,15 @@ export class PatternService {
     return setImmediate(this.loop.bind(this), performance.now());
   }
 
-  get active_pattern(): string {
-    return Array.from(this.#patterns.entries()).find(
-      ([name, pattern]) => pattern === this.#active_pattern,
-    )?.[0]!;
+  get active_pattern(): string | undefined {
+    return this.#active_pattern_name;
   }
-  set active_pattern(pattern_name: string) {
-    this.#active_pattern = this.#patterns.get(pattern_name);
+  set active_pattern(pattern_name: string | undefined) {
+    this.#active_pattern = this.#patterns.get(pattern_name!);
+    this.#active_pattern_name = pattern_name;
+  }
+
+  get patterns(): string[] {
+    return Array.from(this.#patterns.keys());
   }
 }
