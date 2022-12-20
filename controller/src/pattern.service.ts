@@ -4,6 +4,7 @@ import { CandyCanePattern } from './patterns/candy-cane.js';
 import { GingerbreadHousePattern } from './patterns/gingerbread-house.js';
 import { OffPattern } from './patterns/off.js';
 import { TraditionalMulticolorPattern } from './patterns/traditional-multicolor.js';
+import { WarmWhitePattern } from './patterns/warm-white.js';
 
 export class PatternService {
   #patterns: Map<string, Pattern> = new Map();
@@ -22,6 +23,10 @@ export class PatternService {
     this.#patterns.set(
       'traditional-multicolor',
       new TraditionalMulticolorPattern(leds_service, segments),
+    );
+    this.#patterns.set(
+      'warm-white',
+      new WarmWhitePattern(leds_service, segments),
     );
 
     this.#active_pattern = this.#patterns.get('off');
