@@ -10,5 +10,8 @@
 
   "[ruby]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+
+  // improve accuracy of LED simulation
+  "terminal.integrated.minimumContrastRatio": 0
 }

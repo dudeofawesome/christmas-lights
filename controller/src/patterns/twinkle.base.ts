@@ -1,3 +1,4 @@
+import { LED_COUNT } from '../config.js';
 import type { LEDSService } from '../leds.service.js';
 import { rgb_to_int } from '../utils/colorspaces.js';
 import type { Pattern } from './pattern.interface.js';

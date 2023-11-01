@@ -24,7 +24,7 @@ export class TraditionalMulticolorPattern implements Pattern {
 
       for (let j = 0; j < segment.length; j++ && led_cursor++) {
         const color = this.#colors[led_cursor % this.#colors.length]!;
-        const brightness = (Math.cos((segment[j]! + time / 400) / 2) + 4) / 5;
+        const brightness = (Math.cos((segment[j]! + time / 800) / 2) + 2) / 3;
 
         this.leds_service.set_led(
           segment[j]!,
