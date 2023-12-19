@@ -46,6 +46,8 @@ void setup() {
   // wait for serial to be ready
   while (!Serial) {}
 
+  Serial.print("Ready");
+
   strip.begin();  // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();
 }

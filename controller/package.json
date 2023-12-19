@@ -34,8 +34,6 @@
     "chalk": "^5.1.2",
     "color-convert": "^2.0.1",
     "dotenv": "^16.0.3",
-    "rpi-ws281x-native": "^1.0.4",
-    "rpio": "^2.4.2",
     "serialport": "^10.5.0",
     "source-map-support": "^0.5.21",
     "sunrise-sunset-js": "^2.2.1"
@@ -45,8 +43,6 @@
     "@iunu-inc/eslint-config-node": "^0.0.11",
     "@iunu-inc/eslint-config-typescript": "^0.0.12",
     "@types/color-convert": "^2.0.0",
-    "@types/rpi-ws281x-native": "^1.0.0",
-    "@types/rpio": "^2.4.2",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
     "jest": "^28.1.2",
