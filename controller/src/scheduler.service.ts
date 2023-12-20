@@ -3,6 +3,7 @@ import { getSunset } from 'sunrise-sunset-js';
 import {
   LATITUDE,
   LONGITUDE,
+  LED_ALWAYS_ON,
   LED_OFF_HR,
   LED_ON_SUNSET_OFFSET_HR,
 } from './config.js';
@@ -54,8 +55,10 @@ export class SchedulerService {
     light_on_time = this.#light_on_time,
     light_off_time = this.#light_off_time,
   ): boolean {
-    return light_off_time > light_on_time
-      ? fractional_hour >= light_on_time && fractional_hour <= light_off_time
-      : fractional_hour >= light_on_time || fractional_hour <= light_off_time;
+    if (LED_ALWAYS_ON) return true;
+    else
+      return light_off_time > light_on_time
+        ? fractional_hour >= light_on_time && fractional_hour <= light_off_time
+        : fractional_hour >= light_on_time || fractional_hour <= light_off_time;
   }
 }

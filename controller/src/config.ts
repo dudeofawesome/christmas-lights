@@ -1,4 +1,6 @@
 export const LED_COUNT = parseInt(process.env.LED_COUNT!);
+
+export const LED_ALWAYS_ON = process.env.LED_ALWAYS_ON === 'true';
 export const LED_ON_SUNSET_OFFSET_HR = parseFloat(
   process.env.LED_ON_SUNSET_OFFSET_HR!,
 );
