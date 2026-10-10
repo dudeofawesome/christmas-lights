@@ -5,7 +5,7 @@
   "main": "out/index.js",
   "type": "module",
   "engines": {
-    "node": "18"
+    "node": "24"
   },
   "scripts": {
     "build": "tsc",
@@ -34,7 +34,7 @@
     "chalk": "^5.1.2",
     "color-convert": "^2.0.1",
     "dotenv": "^16.0.3",
-    "serialport": "^10.5.0",
+    "serialport": "^13.0.0",
     "source-map-support": "^0.5.21",
     "sunrise-sunset-js": "^2.2.1"
   },
@@ -50,5 +50,10 @@
     "ts-jest": "^28.0.5",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.3"
+  },
+  "allowScripts": {
+    "@serialport/bindings-cpp@13.0.0": true,
+    "core-js-pure@3.26.1": true,
+    "fsevents@2.3.2": true
   }
 }
