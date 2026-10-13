@@ -34,7 +34,10 @@ stdenvNoCC.mkDerivation {
   version = "0.0.1";
   src = lib.fileset.toSource {
     root = ../../relay;
-    fileset = ../../relay/relay.ino;
+    fileset = lib.fileset.unions [
+      ../../relay/relay.ino
+      ../../relay/usb-identity.h
+    ];
   };
   nativeBuildInputs = [
     cli
@@ -54,7 +57,7 @@ stdenvNoCC.mkDerivation {
     # Preseed empty indexes: all board/library sources are supplied explicitly.
     printf '%s\n' '{"packages":[]}' > data/package_index.json
     printf '%s\n' '{"libraries":[]}' > data/library_index.json
-    cp relay.ino sketch/relay/
+    cp relay.ino usb-identity.h sketch/relay/
     cp -r ${arduinoCore}/. user/hardware/arduino/avr/
     cp -r ${sparkfunBoards}/sparkfun/avr/. user/hardware/SparkFun/avr/
     chmod -R u+w user
@@ -91,8 +94,23 @@ stdenvNoCC.mkDerivation {
     test -s build/relay.ino.hex
     test -s build/relay.ino.elf
     ${avr.binutils}/bin/${prefix}size -A build/relay.ino.elf > size.txt
+    ${avr.binutils}/bin/${prefix}objcopy -O binary build/relay.ino.elf firmware.bin
     python3 - <<'PY'
     import pathlib
+    import json
+    import re
+    header = pathlib.Path('usb-identity.h').read_text()
+    identity = {}
+    for field, macro in [('usbProduct', 'PRODUCT'), ('usbSerial', 'SERIAL')]:
+        match = re.search(r'^#define RELAY_USB_' + macro + r' (".*")$', header, re.MULTILINE)
+        assert match, f'Missing USB identity macro: {macro}'
+        identity[field] = json.loads(match[1])
+    firmware = pathlib.Path('firmware.bin').read_bytes()
+    for descriptor in identity.values():
+        assert 1 <= len(descriptor) <= 126, f'Invalid USB descriptor length: {descriptor}'
+        assert all(32 <= ord(c) <= 126 for c in descriptor), 'USB identity must be printable ASCII'
+        assert descriptor.encode('ascii') + b'\0' in firmware, f'Missing USB descriptor: {descriptor}'
+    pathlib.Path('usb-identity.json').write_text(json.dumps(identity))
     sections = {}
     for line in pathlib.Path('size.txt').read_text().splitlines():
         fields = line.split()
@@ -112,19 +130,27 @@ stdenvNoCC.mkDerivation {
     cp build/relay.ino.hex "$out/relay.hex"
     cp build/relay.ino.elf "$out/relay.elf"
     cp size.txt "$out/size.txt"
-    cat > "$out/build.json" <<EOF
-    ${builtins.toJSON {
-      inherit fqbn;
-      mcu = "atmega32u4";
-      clockHz = 16000000;
-      arduinoCoreVersion = "1.8.6";
-      sparkfunRevision = "b2ccf64208ea990ce764fd60b109931296ad1350";
-      neopixelVersion = "1.15.2";
-      arduinoCliVersion = cli.version;
-      avrGccVersion = avr.gcc.version;
-      includesBootloader = false;
-    }}
-    EOF
+    export out
+    python3 - <<'PY'
+    import json
+    import os
+    import pathlib
+    metadata = json.loads(r"""${
+      builtins.toJSON {
+        inherit fqbn;
+        mcu = "atmega32u4";
+        clockHz = 16000000;
+        arduinoCoreVersion = "1.8.6";
+        sparkfunRevision = "b2ccf64208ea990ce764fd60b109931296ad1350";
+        neopixelVersion = "1.15.2";
+        arduinoCliVersion = cli.version;
+        avrGccVersion = avr.gcc.version;
+        includesBootloader = false;
+      }
+    }""")
+    metadata.update(json.loads(pathlib.Path('usb-identity.json').read_text()))
+    pathlib.Path(os.environ['out'], 'build.json').write_text(json.dumps(metadata) + '\n')
+    PY
     runHook postInstall
   '';
   meta = {
