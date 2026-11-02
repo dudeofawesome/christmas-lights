@@ -6,7 +6,6 @@ import {
   PRINT_LED_ARRAY,
   LED_COUNT,
   PRINT_TIMINGS,
-  SERIAL_PORT,
   BAUD_RATE,
   SERIAL_BUFFER_SIZE,
   PRINT_SERIAL,
@@ -32,9 +31,10 @@ export class LEDSService {
 
   private serial_drain?: () => Promise<void>;
 
-  constructor() {
+  constructor(serial_port?: string) {
     if (!NO_IO) {
-      this.serial = new SerialPort({ path: SERIAL_PORT, baudRate: BAUD_RATE });
+      if (!serial_port) throw new Error('A relay serial port is required');
+      this.serial = new SerialPort({ path: serial_port, baudRate: BAUD_RATE });
       console.log(this.serial.path, this.serial.baudRate);
       this.serial.setEncoding('binary');
 

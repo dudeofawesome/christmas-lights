@@ -14,6 +14,7 @@ export const PRINT_SERIAL = process.env.PRINT_SERIAL === 'true';
 
 export const NO_IO = process.env.NO_IO === 'true';
 
-export const SERIAL_PORT = process.env.SERIAL_PORT!;
+export const SERIAL_PORT = process.env.SERIAL_PORT;
+export const RELAY_SERIAL_NUMBER = process.env.RELAY_SERIAL_NUMBER || undefined;
 export const BAUD_RATE = parseInt(process.env.BAUD_RATE!);
 export const SERIAL_BUFFER_SIZE = parseInt(process.env.SERIAL_BUFFER_SIZE!);

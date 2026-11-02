@@ -31,7 +31,7 @@ Both reproducible firmware builds advertise the USB product `Christmas Lights Re
 
 The sketch registers a `PluggableUSBModule` from `usb-identity.h` before USB attaches, supplying product and serial string descriptors without patching the Arduino core. This also works when building the sketch in the Arduino IDE. Edit `RELAY_USB_PRODUCT` and `RELAY_USB_SERIAL` in that header to change the identity; assign a different serial number to each additional relay. Use 1-126 printable ASCII characters without quotes or backslashes. The Nix build reads these values for verification and `build.json`.
 
-On Linux, the serial number can be matched by udev for a stable device path and by an NFD `NodeFeatureRule` for Kubernetes node discovery. The controller currently still requires `SERIAL_PORT`; firmware identity alone does not enable application discovery or configure Kubernetes.
+The controller discovers the relay by USB product name when `SERIAL_PORT` is unset, with an optional serial-number filter; see [controller configuration](../controller/README.md#configuration). On Linux, the serial number can also be matched by udev for a stable device path and by an NFD `NodeFeatureRule` for Kubernetes node discovery.
 
 ## Manual upload
 
