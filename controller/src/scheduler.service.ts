@@ -1,18 +1,12 @@
 import { getSunset } from 'sunrise-sunset-js';
 
-import {
-  LATITUDE,
-  LONGITUDE,
-  LED_ALWAYS_ON,
-  LED_OFF_HR,
-  LED_ON_SUNSET_OFFSET_HR,
-} from './config.js';
+import { control } from './config.js';
 import type { PatternService } from './pattern.service.js';
 import { date_to_fractional_hours } from './utils/time.js';
 
 export class SchedulerService {
   // TODO: get the new sunset time daily
-  static #sunset = getSunset(LATITUDE, LONGITUDE);
+  static #sunset = getSunset(control.location.lat, control.location.lon);
 
   constructor(private pattern_service: PatternService) {
     setImmediate(this.loop.bind(this), performance.now());
@@ -43,11 +37,11 @@ export class SchedulerService {
   }
 
   static get #light_on_time(): number {
-    return date_to_fractional_hours(this.#sunset) + LED_ON_SUNSET_OFFSET_HR;
+    return date_to_fractional_hours(this.#sunset) + control.sunset.offset_hr;
   }
 
   static get #light_off_time(): number {
-    return LED_OFF_HR;
+    return control.sunset.off_hr;
   }
 
   static lights_should_be_on(
@@ -55,7 +49,7 @@ export class SchedulerService {
     light_on_time = this.#light_on_time,
     light_off_time = this.#light_off_time,
   ): boolean {
-    if (LED_ALWAYS_ON) return true;
+    if (control.always_on) return true;
     else
       return light_off_time > light_on_time
         ? fractional_hour >= light_on_time && fractional_hour <= light_off_time

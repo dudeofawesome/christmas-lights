@@ -1,7 +1,7 @@
 import { rgb_to_int, int_to_rgb, hsl_to_int } from '../utils/colorspaces.js';
 import type { LEDSService } from '../leds.service.js';
 import type { Pattern } from './pattern.interface.js';
-import { PRINT_LED_ARRAY } from '../config.js';
+import { debug } from '../config.js';
 import chalk from 'chalk';
 
 export class GingerbreadHousePattern implements Pattern {
@@ -18,7 +18,10 @@ export class GingerbreadHousePattern implements Pattern {
   private segment_colors: number[] = [];
   private start_time!: number;
 
-  constructor(private leds_service: LEDSService, private segments: number[][]) {
+  constructor(
+    private leds_service: LEDSService,
+    private segments: number[][],
+  ) {
     this.assign_colors();
   }
 
@@ -52,7 +55,7 @@ export class GingerbreadHousePattern implements Pattern {
       this.segment_colors[i] = this.colors[rand_color_index]!;
     }
 
-    if (PRINT_LED_ARRAY) {
+    if (debug.print.led_array) {
       console.log(
         '\n' +
           this.segment_colors

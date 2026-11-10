@@ -4,7 +4,7 @@ import { LEDSService } from './leds.service.js';
 import { PatternService } from './pattern.service.js';
 import { fill_list } from './light-segments.js';
 import { SchedulerService } from './scheduler.service.js';
-import { NO_IO, SERIAL_PORT, RELAY_SERIAL_NUMBER } from './config.js';
+import { debug, relay } from './config.js';
 import { find_relay_port } from './relay-port.js';
 
 async function main() {
@@ -17,9 +17,9 @@ async function main() {
     fill_list(479, 440), // gable south
   ];
 
-  const serial_port = NO_IO
+  const serial_port = debug.no_io
     ? undefined
-    : await find_relay_port(SERIAL_PORT, RELAY_SERIAL_NUMBER);
+    : await find_relay_port(relay.serial_port.path, relay.serial_number);
   const leds_service = new LEDSService(serial_port);
   const pattern_service = new PatternService(leds_service, segments);
   const schedule_service = new SchedulerService(pattern_service);

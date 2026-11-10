@@ -2,15 +2,7 @@ import { promisify } from 'util';
 import { SerialPort } from 'serialport';
 import chalk from 'chalk';
 
-import {
-  PRINT_LED_ARRAY,
-  LED_COUNT,
-  PRINT_TIMINGS,
-  BAUD_RATE,
-  SERIAL_BUFFER_SIZE,
-  PRINT_SERIAL,
-  NO_IO,
-} from './config.js';
+import { debug, control, led, relay } from './config.js';
 import { int_to_rgb } from './utils/colorspaces.js';
 
 const FRAME_END_SEQUENCE = new Uint8Array([0x01]);
@@ -25,16 +17,19 @@ const moveCursor = promisify(
 );
 
 export class LEDSService {
-  private leds_array = new Uint8Array(LED_COUNT * 3);
+  private leds_array = new Uint8Array(led.count * 3);
   private serial?: SerialPort;
   private last_timestamp: number = performance.now();
 
   private serial_drain?: () => Promise<void>;
 
   constructor(serial_port?: string) {
-    if (!NO_IO) {
+    if (!debug.no_io) {
       if (!serial_port) throw new Error('A relay serial port is required');
-      this.serial = new SerialPort({ path: serial_port, baudRate: BAUD_RATE });
+      this.serial = new SerialPort({
+        path: serial_port,
+        baudRate: relay.serial_port.baud_rate,
+      });
       console.log(this.serial.path, this.serial.baudRate);
       this.serial.setEncoding('binary');
 
@@ -43,7 +38,7 @@ export class LEDSService {
 
     setImmediate(this.loop.bind(this), performance.now());
 
-    if (PRINT_SERIAL && !NO_IO) {
+    if (debug.print.serial && !debug.no_io) {
       this.serial!.on('data', (data) => {
         process.stdout.write(data.toString('ascii'));
       });
@@ -51,34 +46,37 @@ export class LEDSService {
   }
 
   private async loop(timestamp: number): Promise<NodeJS.Timeout> {
-    if (PRINT_TIMINGS) {
+    if (debug.print.timings) {
       const delta = timestamp - this.last_timestamp;
       this.last_timestamp = timestamp;
       console.info(`${delta.toFixed(0)} ms`);
     }
 
-    if (PRINT_LED_ARRAY) {
+    if (debug.print.led_array) {
       await cursorTo(0);
       await moveCursor(
         0,
-        -Math.abs(Math.floor((LED_COUNT - 1) / process.stdout.columns)),
+        -Math.abs(Math.floor((led.count - 1) / process.stdout.columns)),
       );
       process.stdout.write(this.led_array_to_string());
     }
 
-    if (!NO_IO) {
+    if (!debug.no_io) {
       // write LED array data to serial in SERIAL_BUFFER_SIZE chunks
       for (
         let cursor = 0;
         cursor < this.leds_array.length;
-        cursor += SERIAL_BUFFER_SIZE
+        cursor += relay.serial_port.buffer_size
       ) {
         const subframe = this.leds_array.subarray(
           cursor,
-          Math.min(cursor + SERIAL_BUFFER_SIZE, this.leds_array.length),
+          Math.min(
+            cursor + relay.serial_port.buffer_size,
+            this.leds_array.length,
+          ),
         );
 
-        if (PRINT_SERIAL)
+        if (debug.print.serial)
           console.log(`subframe size: ${subframe.length} bytes`);
 
         // TODO: it's possible this drain call doesn't actually wait for the drain to occur
@@ -100,10 +98,10 @@ export class LEDSService {
           this.serial!.addListener('data', listener);
 
           this.serial!.write(SUBFRAME_END_SEQUENCE);
-          if (PRINT_SERIAL) console.log('waiting for SUBFRAME_END ack');
+          if (debug.print.serial) console.log('waiting for SUBFRAME_END ack');
         });
 
-        if (PRINT_SERIAL) console.log('got SUBFRAME_END ack');
+        if (debug.print.serial) console.log('got SUBFRAME_END ack');
       }
       // TODO: it's possible this drain call doesn't actually wait for the drain to occur
       if (!this.serial!.write(FRAME_END_SEQUENCE)) await this.serial_drain!();
@@ -140,7 +138,7 @@ export class LEDSService {
 
   private led_array_to_string(): string {
     let str: string = '';
-    for (let i = 0; i < LED_COUNT * 3; i += 3) {
+    for (let i = 0; i < led.count * 3; i += 3) {
       str += chalk
         .rgb(
           this.leds_array[i + 0] ?? 0,
