@@ -68,13 +68,21 @@ export class LEDSService {
         cursor < this.leds_array.length;
         cursor += relay.serial_port.buffer_size
       ) {
-        const subframe = this.leds_array.subarray(
-          cursor,
-          Math.min(
-            cursor + relay.serial_port.buffer_size,
-            this.leds_array.length,
-          ),
-        );
+        const subframe = this.leds_array
+          .subarray(
+            cursor,
+            Math.min(
+              cursor + relay.serial_port.buffer_size,
+              this.leds_array.length,
+            ),
+          )
+          .map((subpixel) => {
+            // 0x01 is used to delimit a new frame, so we can't use it as a value.
+            if (subpixel === FRAME_END_SEQUENCE[0]) return 0;
+            // 0x03 is used to delimit a new subframe, so we can't use it as a value.
+            if (subpixel === SUBFRAME_END_SEQUENCE[0]) return 2;
+            else return subpixel;
+          });
 
         if (debug.print.serial)
           console.log(`subframe size: ${subframe.length} bytes`);
@@ -120,16 +128,6 @@ export class LEDSService {
 
     // TODO: this could probably be more efficient.
     color = color.map((c) => Math.round(c)) as [number, number, number];
-
-    // 0x01 is used to delimit a new frame, so we can't use it as a value.
-    if (color[0] === FRAME_END_SEQUENCE[0]) color[0] = 0;
-    if (color[1] === FRAME_END_SEQUENCE[0]) color[1] = 0;
-    if (color[2] === FRAME_END_SEQUENCE[0]) color[2] = 0;
-
-    // 0x03 is used to delimit a new subframe, so we can't use it as a value.
-    if (color[0] === SUBFRAME_END_SEQUENCE[0]) color[0] = 2;
-    if (color[1] === SUBFRAME_END_SEQUENCE[0]) color[1] = 2;
-    if (color[2] === SUBFRAME_END_SEQUENCE[0]) color[2] = 2;
 
     this.leds_array[led * 3 + 0] = color[0];
     this.leds_array[led * 3 + 1] = color[1];
