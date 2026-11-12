@@ -17,6 +17,8 @@ export class SchedulerService {
 
     if (process.argv[2] != null) {
       this.pattern_service.active_pattern = process.argv[2];
+    } else if (led.pattern != null) {
+      this.pattern_service.active_pattern = led.pattern;
     } else if (SchedulerService.lights_should_be_on(fractional_hour)) {
       if (
         this.pattern_service.active_pattern === 'off' ||

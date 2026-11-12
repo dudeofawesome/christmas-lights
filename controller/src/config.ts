@@ -1,5 +1,6 @@
 export const led = {
   count: parseInt(process.env.LED_COUNT!),
+  pattern: process.env.LED_PATTERN,
 };
 
 export const relay = {
