@@ -4,6 +4,7 @@ import chalk from 'chalk';
 
 import { debug, control, led, relay } from './config.ts';
 import { int_to_rgb } from './utils/colorspaces.ts';
+import { gamma_correct } from './utils/gamma.ts';
 
 const FRAME_END_SEQUENCE = new Uint8Array([0x01]);
 const SUBFRAME_END_SEQUENCE = new Uint8Array([0x03]);
@@ -76,6 +77,7 @@ export class LEDSService {
               this.leds_array.length,
             ),
           )
+          .map((pixel) => gamma_correct(pixel))
           .map((subpixel) => {
             // 0x01 is used to delimit a new frame, so we can't use it as a value.
             if (subpixel === FRAME_END_SEQUENCE[0]) return 0;

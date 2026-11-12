@@ -1,5 +1,6 @@
 export const led = {
   count: parseInt(process.env.LED_COUNT!),
+  gamma: parseFloat(process.env.LED_GAMMA ?? '2.2'),
   pattern: process.env.LED_PATTERN,
 };
 
