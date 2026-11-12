@@ -1,10 +1,10 @@
-import type { LEDSService } from './leds.service.js';
-import type { Pattern } from './patterns/pattern.interface.js';
-import { CandyCanePattern } from './patterns/candy-cane.js';
-import { GingerbreadHousePattern } from './patterns/gingerbread-house.js';
-import { OffPattern } from './patterns/off.js';
-import { TraditionalMulticolorPattern } from './patterns/traditional-multicolor.js';
-import { WarmWhitePattern } from './patterns/warm-white.js';
+import type { LEDSService } from './leds.service.ts';
+import type { Pattern } from './patterns/pattern.interface.ts';
+import { CandyCanePattern } from './patterns/candy-cane.ts';
+import { GingerbreadHousePattern } from './patterns/gingerbread-house.ts';
+import { OffPattern } from './patterns/off.ts';
+import { TraditionalMulticolorPattern } from './patterns/traditional-multicolor.ts';
+import { WarmWhitePattern } from './patterns/warm-white.ts';
 
 export class PatternService {
   #patterns: Map<string, Pattern> = new Map();

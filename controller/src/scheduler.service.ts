@@ -1,8 +1,8 @@
 import { getSunset } from 'sunrise-sunset-js';
 
-import { control } from './config.js';
-import type { PatternService } from './pattern.service.js';
-import { date_to_fractional_hours } from './utils/time.js';
+import { control, led } from './config.ts';
+import type { PatternService } from './pattern.service.ts';
+import { date_to_fractional_hours } from './utils/time.ts';
 
 export class SchedulerService {
   // TODO: get the new sunset time daily

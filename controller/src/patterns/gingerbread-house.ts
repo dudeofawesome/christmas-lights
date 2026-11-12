@@ -1,7 +1,7 @@
-import { rgb_to_int, int_to_rgb, hsl_to_int } from '../utils/colorspaces.js';
-import type { LEDSService } from '../leds.service.js';
-import type { Pattern } from './pattern.interface.js';
-import { debug } from '../config.js';
+import { rgb_to_int, int_to_rgb, hsl_to_int } from '../utils/colorspaces.ts';
+import type { LEDSService } from '../leds.service.ts';
+import type { Pattern } from './pattern.interface.ts';
+import { debug } from '../config.ts';
 import chalk from 'chalk';
 
 export class GingerbreadHousePattern implements Pattern {

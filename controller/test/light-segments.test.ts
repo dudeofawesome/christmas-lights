@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { fill_list } from '../src/light-segments.js';
+import { fill_list } from '../src/light-segments.ts';
 
 describe('light-segments:unit', () => {
   describe('fill_list', () => {

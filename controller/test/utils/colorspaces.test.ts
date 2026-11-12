@@ -3,7 +3,7 @@ import {
   rgb_to_int,
   int_to_rgb,
   hsl_to_int,
-} from '../../src/utils/colorspaces.js';
+} from '../../src/utils/colorspaces.ts';
 
 describe('colorspaces:unit', () => {
   describe('rgb_to_int', () => {

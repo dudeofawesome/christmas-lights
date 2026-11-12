@@ -1,6 +1,6 @@
-import type { LEDSService } from '../leds.service.js';
-import { rgb_to_int } from '../utils/colorspaces.js';
-import type { Pattern } from './pattern.interface.js';
+import type { LEDSService } from '../leds.service.ts';
+import { rgb_to_int } from '../utils/colorspaces.ts';
+import type { Pattern } from './pattern.interface.ts';
 
 export class WarmWhitePattern implements Pattern {
   static #warm_white = rgb_to_int(255, 142, 33);

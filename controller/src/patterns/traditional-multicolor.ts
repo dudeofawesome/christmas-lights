@@ -1,6 +1,6 @@
-import { int_to_rgb, hsl_to_int } from '../utils/colorspaces.js';
-import type { LEDSService } from '../leds.service.js';
-import type { Pattern } from './pattern.interface.js';
+import { int_to_rgb, hsl_to_int } from '../utils/colorspaces.ts';
+import type { LEDSService } from '../leds.service.ts';
+import type { Pattern } from './pattern.interface.ts';
 
 export class TraditionalMulticolorPattern implements Pattern {
   /** hsl colors */

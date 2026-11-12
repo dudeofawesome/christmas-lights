@@ -2,8 +2,8 @@ import { promisify } from 'util';
 import { SerialPort } from 'serialport';
 import chalk from 'chalk';
 
-import { debug, control, led, relay } from './config.js';
-import { int_to_rgb } from './utils/colorspaces.js';
+import { debug, control, led, relay } from './config.ts';
+import { int_to_rgb } from './utils/colorspaces.ts';
 
 const FRAME_END_SEQUENCE = new Uint8Array([0x01]);
 const SUBFRAME_END_SEQUENCE = new Uint8Array([0x03]);
@@ -126,7 +126,7 @@ export class LEDSService {
     if (color[1] === FRAME_END_SEQUENCE[0]) color[1] = 0;
     if (color[2] === FRAME_END_SEQUENCE[0]) color[2] = 0;
 
-    // 0x01 is used to delimit a new subframe, so we can't use it as a value.
+    // 0x03 is used to delimit a new subframe, so we can't use it as a value.
     if (color[0] === SUBFRAME_END_SEQUENCE[0]) color[0] = 2;
     if (color[1] === SUBFRAME_END_SEQUENCE[0]) color[1] = 2;
     if (color[2] === SUBFRAME_END_SEQUENCE[0]) color[2] = 2;

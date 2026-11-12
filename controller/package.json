@@ -5,11 +5,11 @@
   "main": "out/index.js",
   "type": "module",
   "engines": {
-    "node": "24"
+    "node": "26"
   },
   "scripts": {
     "build": "tsc",
-    "start": "node --require dotenv/config .",
+    "start": "node --env-file=.env .",
     "dev": "npm run build && node --require dotenv/config --inspect .",
     "debug": "npm run build && node --require dotenv/config --inspect --inspect-brk .",
     "watch": "nodemon --watch src/ --watch *.env* --exec 'npm run dev'",
@@ -49,7 +49,7 @@
     "nodemon": "^2.0.20",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.3"
+    "typescript": "^5.9.3"
   },
   "allowScripts": {
     "@serialport/bindings-cpp@13.0.0": true,

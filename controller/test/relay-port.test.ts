@@ -3,8 +3,8 @@ import { SerialPort } from 'serialport';
 import { mkdtemp, mkdir, rm, symlink, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { find_relay_port } from '../src/relay-port.js';
-import * as usb from '../src/usb-products.js';
+import { find_relay_port } from '../src/relay-port.ts';
+import * as usb from '../src/usb-products.ts';
 
 function devices(
   entries: { path: string; serialNumber?: string; product?: string }[],

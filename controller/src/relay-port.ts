@@ -1,5 +1,5 @@
 import { SerialPort } from 'serialport';
-import { get_usb_products } from './usb-products.js';
+import { get_usb_products } from './usb-products.ts';
 
 const RELAY_PRODUCT = 'Christmas Lights Relay';
 

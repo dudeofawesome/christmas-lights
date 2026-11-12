@@ -1,11 +1,11 @@
 import 'source-map-support/register.js';
 
-import { LEDSService } from './leds.service.js';
-import { PatternService } from './pattern.service.js';
-import { fill_list } from './light-segments.js';
-import { SchedulerService } from './scheduler.service.js';
-import { debug, relay } from './config.js';
-import { find_relay_port } from './relay-port.js';
+import { LEDSService } from './leds.service.ts';
+import { PatternService } from './pattern.service.ts';
+import { fill_list } from './light-segments.ts';
+import { SchedulerService } from './scheduler.service.ts';
+import { debug, relay } from './config.ts';
+import { find_relay_port } from './relay-port.ts';
 
 async function main() {
   const segments = [

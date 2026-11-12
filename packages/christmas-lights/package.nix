@@ -1,8 +1,8 @@
 {
   lib,
   buildNpmPackage,
-  nodejs_24,
-  nodejs-slim_24,
+  nodejs_26,
+  nodejs-slim_26,
   python3,
   makeWrapper,
 }:
@@ -10,7 +10,7 @@
 buildNpmPackage {
   pname = "christmas-lights";
   version = "0.0.1";
-  nodejs = nodejs_24;
+  nodejs = nodejs_26;
   src = lib.fileset.toSource {
     root = ../../controller;
     fileset = lib.fileset.unions [
@@ -59,8 +59,8 @@ buildNpmPackage {
     cp -r out node_modules package.json "$app/"
     # Production dependency executables need Node, without npm/corepack's build-tool closure.
     find "$app/node_modules" -type f -name '*.js' -exec \
-      sed -i 's#${nodejs_24}/bin/node#${nodejs-slim_24}/bin/node#g' {} +
-    makeWrapper ${nodejs-slim_24}/bin/node "$out/bin/christmas-lights" \
+      sed -i 's#${nodejs_26}/bin/node#${nodejs-slim_26}/bin/node#g' {} +
+    makeWrapper ${nodejs-slim_26}/bin/node "$out/bin/christmas-lights" \
       --add-flags "--require $app/node_modules/dotenv/config.js $app/out/index.js"
     runHook postInstall
   '';

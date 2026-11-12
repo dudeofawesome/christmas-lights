@@ -5,7 +5,7 @@
 
   languages.javascript = {
     enable = true;
-    package = pkgs.nodejs_24;
+    package = pkgs.nodejs_26;
     npm.enable = true;
   };
 
@@ -22,7 +22,7 @@
 
   env = {
     npm_config_build_from_source = "true";
-    npm_config_nodedir = "${pkgs.nodejs_24}";
+    npm_config_nodedir = "${pkgs.nodejs_26}";
     CC = "${pkgs.stdenv.cc}/bin/cc";
     CXX = "${pkgs.stdenv.cc}/bin/c++";
   };

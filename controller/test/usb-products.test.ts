@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 import { mkdtemp, mkdir, rm, symlink, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { linux_usb_product, macos_usb_products } from '../src/usb-products.js';
+import { linux_usb_product, macos_usb_products } from '../src/usb-products.ts';
 
 describe('USB product metadata', () => {
   test('walks Linux sysfs parents for both ACM and USB serial devices', async () => {

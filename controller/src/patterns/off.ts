@@ -1,6 +1,6 @@
-import { led } from '../config.js';
-import type { LEDSService } from '../leds.service.js';
-import type { Pattern } from './pattern.interface.js';
+import { led } from '../config.ts';
+import type { LEDSService } from '../leds.service.ts';
+import type { Pattern } from './pattern.interface.ts';
 
 export class OffPattern implements Pattern {
   constructor(private leds_service: LEDSService) {}

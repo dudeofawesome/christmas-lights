@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { SchedulerService } from '../src/scheduler.service.js';
+import { SchedulerService } from '../src/scheduler.service.ts';
 
 describe('scheduler.service:unit', () => {
   describe('SchedulerService', () => {

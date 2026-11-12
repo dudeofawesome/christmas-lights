@@ -1,6 +1,6 @@
-import { rgb_to_int } from '../utils/colorspaces.js';
-import type { LEDSService } from '../leds.service.js';
-import type { Pattern } from './pattern.interface.js';
+import { rgb_to_int } from '../utils/colorspaces.ts';
+import type { LEDSService } from '../leds.service.ts';
+import type { Pattern } from './pattern.interface.ts';
 
 export class CandyCanePattern implements Pattern {
   private period = 24;

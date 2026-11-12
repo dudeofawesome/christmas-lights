@@ -1,6 +1,6 @@
 {
   dockerTools,
-  nodejs-slim_24,
+  nodejs-slim_26,
   tzdata,
   christmas-lights,
 }:
@@ -14,7 +14,7 @@ dockerTools.buildLayeredImage {
   ];
   config = {
     Entrypoint = [
-      "${nodejs-slim_24}/bin/node"
+      "${nodejs-slim_26}/bin/node"
       "--require"
       "${christmas-lights}/lib/christmas-lights/node_modules/dotenv/config.js"
       "${christmas-lights}/lib/christmas-lights/out/index.js"
