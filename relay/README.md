@@ -12,8 +12,8 @@ Requires a 5V microcontroller
 Build on Linux, either directly or through the explicit devenv commands:
 
 ```sh
-nix build .#relay-firmware-leonardo --out-link result-leonardo
-nix build .#relay-firmware-promicro --out-link result-promicro
+nix build .#relay-firmware-leonardo --out-link result/leonardo
+nix build .#relay-firmware-promicro --out-link result/promicro
 ```
 
 On macOS, use a configured Linux builder and select a Linux output:
@@ -40,11 +40,11 @@ Build and choose the correct board output first. First identify the bootloader's
 ```sh
 # Leonardo
 avrdude -p atmega32u4 -c avr109 -b 57600 \
-  -P /dev/ttyACM0 -D -U flash:w:result-leonardo/relay.hex:i
+  -P /dev/ttyACM0 -D -U flash:w:result/leonardo/relay.hex:i
 
 # Pro Micro 5V / 16MHz
 avrdude -p atmega32u4 -c avr109 -b 57600 \
-  -P /dev/ttyACM0 -D -U flash:w:result-promicro/relay.hex:i
+  -P /dev/ttyACM0 -D -U flash:w:result/promicro/relay.hex:i
 ```
 
 Replace `/dev/ttyACM0` with the actual bootloader port (macOS commonly uses `/dev/cu.usbmodem...`).

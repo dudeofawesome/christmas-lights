@@ -26,7 +26,7 @@ RelayUSBIdentity relayUsbIdentity;
 #endif
 
 // How many NeoPixels are attached to the Arduino?
-#define LED_COUNT 500
+#define LED_COUNT 600
 #define FRAME_DELIMITER 0x01
 #define SUBFRAME_DELIMITER 0x03
 // #define FRAME_DELIMITER (int)'z'
