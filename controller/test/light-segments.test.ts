@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from 'vitest';
 import { fill_list } from '../src/light-segments.ts';
 
 describe('light-segments:unit', () => {

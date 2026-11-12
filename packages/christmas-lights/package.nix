@@ -17,12 +17,12 @@ buildNpmPackage {
       ../../controller/package.json
       ../../controller/package-lock.json
       ../../controller/tsconfig.json
-      ../../controller/jest.config.ts
+      ../../controller/vitest.config.ts
       ../../controller/src
       ../../controller/test
     ];
   };
-  npmDepsHash = "sha256-U/raQgz3l6FsMqYS6IeqEOZed8KSNHTmi8ZyPSgiICI=";
+  npmDepsHash = "sha256-riIf7SDtb+n2p899Hon9FoQGJgeydbTNqjPtjKw8egI=";
   nativeBuildInputs = [
     python3
     makeWrapper

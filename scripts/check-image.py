@@ -28,5 +28,5 @@ with tarfile.open(sys.argv[1]) as archive:
             relative = name[len(app) + 1:]
             assert pathlib.PurePosixPath(relative).name != ".env", name
             assert not relative.startswith(("test/", "src/")), name
-            assert not relative.startswith(("node_modules/typescript/", "node_modules/jest/")), name
+            assert not relative.startswith(("node_modules/typescript/", "node_modules/vitest/", "node_modules/@vitest/")), name
 print("Image architecture, entrypoint, user, timezone data, and application contents passed")

@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from 'vitest';
 import { SchedulerService } from '../src/scheduler.service.ts';
 
 describe('scheduler.service:unit', () => {

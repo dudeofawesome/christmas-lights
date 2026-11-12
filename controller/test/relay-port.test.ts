@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, jest, test } from '@jest/globals';
+import { afterEach, describe, expect, vi, test } from 'vitest';
 import { SerialPort } from 'serialport';
 import { mkdtemp, mkdir, rm, symlink, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
@@ -9,7 +9,7 @@ import * as usb from '../src/usb-products.ts';
 function devices(
   entries: { path: string; serialNumber?: string; product?: string }[],
 ) {
-  jest.spyOn(SerialPort, 'list').mockResolvedValue(
+  vi.spyOn(SerialPort, 'list').mockResolvedValue(
     entries.map((entry) => ({
       path: entry.path,
       serialNumber: entry.serialNumber,
@@ -20,7 +20,7 @@ function devices(
       productId: undefined,
     })),
   );
-  jest
+  vi
     .spyOn(usb, 'get_usb_products')
     .mockResolvedValue(
       new Map(
@@ -30,7 +30,7 @@ function devices(
 }
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 describe('relay port discovery', () => {
@@ -54,7 +54,7 @@ describe('relay port discovery', () => {
         await symlink(join(device, suffix), join(tty, 'device'));
         await writeFile(join(device, 'product'), 'Christmas Lights Relay\n');
       }
-      jest.spyOn(usb, 'get_usb_products').mockImplementation(async (ports) => {
+      vi.spyOn(usb, 'get_usb_products').mockImplementation(async (ports) => {
         const products = new Map<string, string>();
         for (const path of ports) {
           const product = await usb.linux_usb_product(path, tty_root);
@@ -85,7 +85,7 @@ describe('relay port discovery', () => {
         serialNumber: 'christmas-lights-001',
       },
     ]);
-    jest.spyOn(usb, 'get_usb_products').mockResolvedValue(
+    vi.spyOn(usb, 'get_usb_products').mockResolvedValue(
       usb.macos_usb_products(`+-o relay <class IOUSBHostDevice>
   | {
   |   "USB Product Name" = "Christmas Lights Relay"
@@ -107,8 +107,8 @@ describe('relay port discovery', () => {
   });
 
   test('uses an explicit port without enumerating devices or USB metadata', async () => {
-    const list = jest.spyOn(SerialPort, 'list');
-    const products = jest.spyOn(usb, 'get_usb_products');
+    const list = vi.spyOn(SerialPort, 'list');
+    const products = vi.spyOn(usb, 'get_usb_products');
     await expect(find_relay_port('/dev/christmas-lights')).resolves.toBe(
       '/dev/christmas-lights',
     );
@@ -224,7 +224,7 @@ describe('relay port discovery', () => {
   });
 
   test('propagates device enumeration failures', async () => {
-    jest
+    vi
       .spyOn(SerialPort, 'list')
       .mockRejectedValue(new Error('Cannot list ports'));
     await expect(find_relay_port(undefined)).rejects.toThrow(
@@ -234,7 +234,7 @@ describe('relay port discovery', () => {
 
   test('propagates USB metadata failures', async () => {
     devices([{ path: '/dev/ttyACM0' }]);
-    jest
+    vi
       .spyOn(usb, 'get_usb_products')
       .mockRejectedValue(new Error('Cannot read USB metadata'));
     await expect(find_relay_port(undefined)).rejects.toThrow(
