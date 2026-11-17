@@ -15,12 +15,12 @@ export class SchedulerService {
   loop(time: number): NodeJS.Timeout {
     const fractional_hour = date_to_fractional_hours();
 
-    if (process.argv[2] != null) {
-      this.pattern_service.active_pattern = process.argv[2];
-    } else if (led.pattern != null) {
-      this.pattern_service.active_pattern = led.pattern;
-    } else if (SchedulerService.lights_should_be_on(fractional_hour)) {
-      if (
+    if (SchedulerService.lights_should_be_on(fractional_hour)) {
+      if (process.argv[2] != null) {
+        this.pattern_service.active_pattern = process.argv[2];
+      } else if (led.pattern != null) {
+        this.pattern_service.active_pattern = led.pattern;
+      } else if (
         this.pattern_service.active_pattern === 'off' ||
         this.pattern_service.active_pattern == null
       ) {
