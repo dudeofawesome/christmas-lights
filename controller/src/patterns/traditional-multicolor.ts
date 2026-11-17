@@ -1,15 +1,15 @@
-import { int_to_rgb, hsl_to_int } from '../utils/colorspaces.ts';
+import { hsl_to_int } from '../utils/colorspaces.ts';
 import type { LEDSService } from '../leds.service.ts';
 import type { Pattern } from './pattern.interface.ts';
 
 export class TraditionalMulticolorPattern implements Pattern {
   /** hsl colors */
   #colors = [
-    [300, 1, 0.48], // fuschia
-    [238, 1, 0.48], // blue
     [0, 1, 0.5], // red
-    [124, 1, 0.41], // green
-    [51, 1, 0.78], // yellow
+    [124, 0.8, 0.4], // green
+    [243, 1, 0.4], // blue
+    [43, 1, 0.57], // yellow
+    // [46, 1, 0.88], // white
   ];
 
   constructor(
