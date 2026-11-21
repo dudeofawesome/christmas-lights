@@ -5,9 +5,7 @@ import chalk from 'chalk';
 import { debug, control, led, relay } from './config.ts';
 import { int_to_rgb } from './utils/colorspaces.ts';
 import { gamma_correct } from './utils/gamma.ts';
-
-const FRAME_END_SEQUENCE = new Uint8Array([0x01]);
-const SUBFRAME_END_SEQUENCE = new Uint8Array([0x03]);
+import { RelayConnection } from './relay-connection.ts';
 
 function noop() {}
 const cursorTo = promisify(
@@ -22,7 +20,7 @@ export class LEDSService {
   private serial?: SerialPort;
   private last_timestamp: number = performance.now();
 
-  private serial_drain?: () => Promise<void>;
+  private connection?: RelayConnection;
 
   constructor(serial_port?: string) {
     if (!debug.no_io) {
@@ -30,30 +28,46 @@ export class LEDSService {
       this.serial = new SerialPort({
         path: serial_port,
         baudRate: relay.serial_port.baud_rate,
+        autoOpen: false,
       });
       console.log(this.serial.path, this.serial.baudRate);
-      this.serial.setEncoding('binary');
-
-      this.serial_drain = promisify(this.serial.drain.bind(this.serial));
+      this.connection = new RelayConnection(
+        this.serial,
+        led.count,
+        relay.serial_port.buffer_size,
+      );
     }
 
-    setImmediate(this.loop.bind(this), performance.now());
+    setImmediate(() => {
+      this.start().catch((error: unknown) => this.stop(error));
+    });
 
     if (debug.print.serial && !debug.no_io) {
       this.serial!.on('data', (data) => {
-        process.stdout.write(data.toString('ascii'));
+        console.log(`relay response: ${data.toString('hex')}`);
       });
     }
   }
 
-  private async loop(timestamp: number): Promise<NodeJS.Timeout> {
+  private async start(): Promise<void> {
+    await this.connection?.initialize();
+    await this.loop(performance.now());
+  }
+
+  private stop(error: unknown): void {
+    console.error('Relay communication failed:', error);
+    this.serial?.destroy();
+    process.exit(1);
+  }
+
+  private async loop(timestamp: number): Promise<void> {
     if (debug.print.timings) {
       const delta = timestamp - this.last_timestamp;
       this.last_timestamp = timestamp;
       console.info(`${delta.toFixed(0)} ms`);
     }
 
-    if (debug.print.led_array) {
+    if (debug.print.led_array && process.stdout.isTTY) {
       await cursorTo(0);
       await moveCursor(
         0,
@@ -63,61 +77,17 @@ export class LEDSService {
     }
 
     if (!debug.no_io) {
-      // write LED array data to serial in SERIAL_BUFFER_SIZE chunks
-      for (
-        let cursor = 0;
-        cursor < this.leds_array.length;
-        cursor += relay.serial_port.buffer_size
-      ) {
-        const subframe = this.leds_array
-          .subarray(
-            cursor,
-            Math.min(
-              cursor + relay.serial_port.buffer_size,
-              this.leds_array.length,
-            ),
-          )
-          .map((pixel) => gamma_correct(pixel))
-          .map((subpixel) => {
-            // 0x01 is used to delimit a new frame, so we can't use it as a value.
-            if (subpixel === FRAME_END_SEQUENCE[0]) return 0;
-            // 0x03 is used to delimit a new subframe, so we can't use it as a value.
-            if (subpixel === SUBFRAME_END_SEQUENCE[0]) return 2;
-            else return subpixel;
-          });
-
-        if (debug.print.serial)
-          console.log(`subframe size: ${subframe.length} bytes`);
-
-        // TODO: it's possible this drain call doesn't actually wait for the drain to occur
-        if (!this.serial!.write(subframe)) await this.serial_drain!();
-        if (!this.serial!.write(SUBFRAME_END_SEQUENCE))
-          await this.serial_drain!();
-
-        /**
-         * Wait for Arduino to ack the end of a subframe, indicating that the
-         * serial buffer should be cleared.
-         */
-        await new Promise<void>((res) => {
-          const listener = (data: string) => {
-            if (data[0] === `${SUBFRAME_END_SEQUENCE[0]}`) {
-              this.serial!.removeListener('data', listener);
-              return res();
-            }
-          };
-          this.serial!.addListener('data', listener);
-
-          this.serial!.write(SUBFRAME_END_SEQUENCE);
-          if (debug.print.serial) console.log('waiting for SUBFRAME_END ack');
-        });
-
-        if (debug.print.serial) console.log('got SUBFRAME_END ack');
-      }
-      // TODO: it's possible this drain call doesn't actually wait for the drain to occur
-      if (!this.serial!.write(FRAME_END_SEQUENCE)) await this.serial_drain!();
+      await this.connection!.send_frame(
+        this.leds_array.map((pixel) => gamma_correct(pixel)),
+      );
     }
 
-    return setTimeout(this.loop.bind(this), 1000 / 60, performance.now());
+    const next_frame = () => {
+      this.loop(performance.now()).catch((error: unknown) => this.stop(error));
+    };
+    const delay = 1000 / 60 - (performance.now() - timestamp);
+    if (delay > 0) setTimeout(next_frame, delay);
+    else setImmediate(next_frame);
   }
 
   public set_led(led: number, color: [number, number, number]): void;

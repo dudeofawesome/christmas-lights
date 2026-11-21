@@ -2,6 +2,25 @@
 
 Requires a 5V microcontroller
 
+## Serial protocol
+
+The controller and relay must both support protocol version 1. The serial baud rate is 1,000,000. On opening a connection, the controller sends a six-byte header:
+
+| Bytes | Value |
+| ----- | ----- |
+| 0–1 | `43 4c` hex (`CL`) |
+| 2 | Version: `01` |
+| 3–4 | LED count, unsigned 16-bit big-endian |
+| 5 | `0` for whole frames, or a chunk size of 1–64 bytes |
+
+The relay allocates an RGB buffer for the requested count, clears the strip, and replies with the single byte `10` hex when ready. The AVR firmware accepts 1–600 LEDs to leave SRAM for USB and the stack; invalid counts, invalid chunk sizes, and allocation failures receive `7f` hex. Change the controller's `LED_COUNT` to select the strip length without rebuilding firmware within that limit.
+
+Each frame is exactly `LED_COUNT * 3` raw bytes in RGB order, with all channel values from 0 through 255 available. By default the controller sends the whole frame in one write and waits for the relay to display it and reply with `12` hex. If older firmware rejects whole-frame mode with `7f`, the controller retries setup with 64-byte chunks. Chunked transfers require a reply of `11` hex after each intermediate chunk and `12` hex after the frame has been displayed. The final chunk may be shorter than the chunk size. Acknowledgments are binary bytes. Frames receive gamma correction in the controller before transmission.
+
+A partial header or frame times out after two seconds without data. The relay discards the partial transfer, replies with `7f` hex, and waits for a new header. Disconnecting also resets the session. Incomplete frames are never displayed; the last displayed frame stays on the strip until a complete frame or new configuration arrives. The controller exits on an unexpected acknowledgment, disconnect, serial error, or three-second acknowledgment timeout; restart it to establish a new session.
+
+Run host-side parser checks from the repository root with `devenv shell --quiet -- python3 scripts/test-relay.py`. These exercise the sketch using serial and pixel-buffer stubs; use firmware builds and hardware testing to verify AVR memory use and USB/LED timing.
+
 ## Reproducible firmware
 
 | Output                    | Board identifier                            |

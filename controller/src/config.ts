@@ -8,7 +8,10 @@ export const relay = {
   serial_port: {
     path: process.env.SERIAL_PORT || undefined,
     baud_rate: parseInt(process.env.BAUD_RATE ?? '1000000'),
-    buffer_size: parseInt(process.env.SERIAL_BUFFER_SIZE ?? '100'),
+    buffer_size:
+      process.env.SERIAL_BUFFER_SIZE === undefined
+        ? undefined
+        : parseInt(process.env.SERIAL_BUFFER_SIZE),
   },
   serial_number: process.env.RELAY_SERIAL_NUMBER || undefined,
 };
