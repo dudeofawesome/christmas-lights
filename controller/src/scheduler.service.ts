@@ -24,10 +24,10 @@ export class SchedulerService {
         this.pattern_service.active_pattern === 'off' ||
         this.pattern_service.active_pattern == null
       ) {
-        const pattern =
-          this.pattern_service.patterns[
-            Math.floor(Math.random() * this.pattern_service.patterns.length)
-          ];
+        const patterns = this.pattern_service.patterns.filter(
+          (pattern) => pattern !== 'off',
+        );
+        const pattern = patterns[Math.floor(Math.random() * patterns.length)];
         console.log(`Starting new pattern: ${pattern}`);
         this.pattern_service.active_pattern = pattern;
       }
